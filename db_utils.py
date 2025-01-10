@@ -30,6 +30,21 @@ def get_db_connection():
     )
     return connection
 
+def fetch_constants(table_name):
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        
+        cursor.execute(f"SELECT name FROM {table_name} ORDER BY name;")
+        return [row[0] for row in cursor.fetchall()]
+    
+def add_constant(table_name, value):
+    """Add a new constant to the specified table."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"INSERT INTO {table_name} (name) VALUES (%s) ON CONFLICT DO NOTHING;", (value,))
+        conn.commit()
+
+
 def fetch_unannotated_doc():
     with get_db_connection() as conn:
         cursor = conn.cursor()
