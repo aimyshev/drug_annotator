@@ -22,6 +22,169 @@ def normalize(form):
             return form[0].lower() + form[1:]
     return form
 
+@st.fragment
+def render_table_row(index):
+    col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns([2,1,1,1,1,1,1,1,0.5])
+    
+    # Name
+    with col1:
+        name = st.text_input(
+            "Name", 
+            value=st.session_state.df.at[index, 'name'], 
+            key=f"name_{index}", 
+            label_visibility="collapsed"
+        )
+        if name != st.session_state.df.at[index, 'name']:
+            st.session_state.df.at[index, 'name'] = name
+
+    # Form
+    with col2:
+        form_options = FORM_OPTIONS + ['Other']
+        current_form = normalize(st.session_state.df.at[index, 'form'])
+        form_index = 0
+        if not pd.isna(current_form) and current_form != '':
+            try:
+                form_index = form_options.index(current_form) + 1
+            except ValueError:
+                form_index = 0
+                
+        form_selected = st.selectbox(
+            "Form", 
+            options=[''] + form_options, 
+            index=form_index,
+            key=f"form_{index}", 
+            label_visibility="collapsed"
+        )
+        if form_selected == 'Other':
+            new_form = st.text_input("", key=f"new_form_{index}", label_visibility="collapsed")
+            if new_form:
+                add_constant("form_options", new_form)
+                FORM_OPTIONS.append(new_form)
+                st.success(f"Added '{new_form}' to Form options.")
+        elif form_selected != st.session_state.df.at[index, 'form']:
+            st.session_state.df.at[index, 'form'] = form_selected
+
+    # Dosage
+    with col3:
+        dosage_num = st.text_input(
+            "Dosage", 
+            value=st.session_state.df.at[index, 'dosage_num'], 
+            key=f"dosage_num_{index}", 
+            label_visibility="collapsed"
+        )
+        if dosage_num != st.session_state.df.at[index, 'dosage_num']:
+            st.session_state.df.at[index, 'dosage_num'] = dosage_num
+
+    # Unit
+    with col4:
+        unit_options = DOSAGE_UNITS + ['Other']
+        current_unit = st.session_state.df.at[index, 'dosage_unit']
+        unit_index = 0
+        if not pd.isna(current_unit) and current_unit != '':
+            try:
+                unit_index = unit_options.index(current_unit) + 1
+            except ValueError:
+                unit_index = 0
+                
+        unit_selected = st.selectbox(
+            "Unit", 
+            options=[''] + unit_options, 
+            index=unit_index,
+            key=f"unit_{index}", 
+            label_visibility="collapsed"
+        )
+        if unit_selected == 'Other':
+            new_unit = st.text_input("", key=f"new_unit_{index}", label_visibility="collapsed")
+            if new_unit and st.button(f"Add New Unit", key=f"add_unit_{index}"):
+                add_constant("dosage_units", new_unit)
+                DOSAGE_UNITS.append(new_unit)
+                st.success(f"Added '{new_unit}' to Unit options.")
+        elif unit_selected != st.session_state.df.at[index, 'dosage_unit']:
+            st.session_state.df.at[index, 'dosage_unit'] = unit_selected
+
+    # Concentration
+    with col5:
+        concentration = st.text_input(
+            "Concentration", 
+            value=st.session_state.df.at[index, 'concentration'], 
+            key=f"concentration_{index}", 
+            label_visibility="collapsed"
+        )
+        if concentration != st.session_state.df.at[index, 'concentration']:
+            st.session_state.df.at[index, 'concentration'] = concentration
+
+    # Frequency
+    with col6:
+        frequency_options = FREQUENCY_OPTIONS + ['Other']
+        current_freq = st.session_state.df.at[index, 'frequency']
+        freq_index = 0
+        if not pd.isna(current_freq) and current_freq != '':
+            try:
+                freq_index = frequency_options.index(current_freq) + 1
+            except ValueError:
+                freq_index = 0
+                
+        frequency_selected = st.selectbox(
+            "Frequency", 
+            options=[''] + frequency_options, 
+            index=freq_index,
+            key=f"frequency_{index}", 
+            label_visibility="collapsed"
+        )
+        if frequency_selected == 'Other':
+            new_frequency = st.text_input("", key=f"new_frequency_{index}", label_visibility="collapsed")
+            if new_frequency:
+                add_constant("frequency_options", new_frequency)
+                FREQUENCY_OPTIONS.append(new_frequency)
+                st.success(f"Added '{new_frequency}' to Frequency options.")
+        elif frequency_selected != st.session_state.df.at[index, 'frequency']:
+            st.session_state.df.at[index, 'frequency'] = frequency_selected
+
+    # Duration
+    with col7:
+        duration = st.text_input(
+            "Duration", 
+            value=st.session_state.df.at[index, 'duration'], 
+            key=f"duration_{index}", 
+            label_visibility="collapsed"
+        )
+        if duration != st.session_state.df.at[index, 'duration']:
+            st.session_state.df.at[index, 'duration'] = duration
+
+    # Route
+    with col8:
+        route_options = ROUTE_OPTIONS + ['Other']
+        current_route = normalize(st.session_state.df.at[index, 'route'])
+        route_index = 0
+        if not pd.isna(current_route) and current_route != '':
+            try:
+                route_index = route_options.index(current_route) + 1
+            except ValueError:
+                route_index = 0
+                
+        route_selected = st.selectbox(
+            "Route", 
+            options=[''] + route_options, 
+            index=route_index,
+            key=f"route_{index}", 
+            label_visibility="collapsed"
+        )
+        if route_selected == 'Other':
+            new_route = st.text_input("", key=f"new_route_{index}", label_visibility="collapsed")
+            if new_route and st.button(f"Add New Route", key=f"add_route_{index}"):
+                add_constant("route_options", new_route)
+                ROUTE_OPTIONS.append(new_route)
+                st.success(f"Added '{new_route}' to Route options.")
+        elif route_selected != st.session_state.df.at[index, 'route']:
+            st.session_state.df.at[index, 'route'] = route_selected
+
+    # Delete button
+    with col9:
+        if st.button("🗑️", key=f"delete_{index}", help="Delete this row"):
+            st.session_state.df = st.session_state.df.drop(index)
+            st.session_state.df = st.session_state.df.reset_index(drop=True)
+            st.rerun()
+
 def main():
     st.set_page_config(layout="wide")
     st.title("Stroke Drugs Annotation Interface")
@@ -74,82 +237,9 @@ def main():
     col8.write("Route")
     col9.write("Delete")
 
-    # Create an editable table with dropdown menus for certain columns
+    # Render table rows
     for index in range(len(st.session_state.df)):
-        col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns([2,1,1,1,1,1,1,1,0.5])
-    
-        with col1:
-            st.session_state.df.at[index, 'name'] = st.text_input("Name", value=st.session_state.df.at[index, 'name'], key=f"name_{index}", label_visibility="collapsed")
-        with col2:
-            form_options = FORM_OPTIONS + ['Other']
-            form_selected = st.selectbox("Form", options=[''] + form_options, 
-                                        index=0 if pd.isna(st.session_state.df.at[index, 'form']) or st.session_state.df.at[index, 'form'] == '' 
-                                        else form_options.index(normalize(st.session_state.df.at[index, 'form']))+1, 
-                                        key=f"form_{index}", label_visibility="collapsed")
-            if form_selected == 'Other':
-                new_form = st.text_input("", key="user_input_key", label_visibility="collapsed")
-                if new_form:
-                    add_constant("form_options", new_form)
-                    FORM_OPTIONS.append(new_form)
-                    st.success(f"Added '{new_form}' to Form options.")
-            else:
-                st.session_state.df.at[index, 'form'] = form_selected
-        with col3:
-            st.session_state.df.at[index, 'dosage_num'] = st.text_input("Dosage", value=st.session_state.df.at[index, 'dosage_num'], key=f"dosage_num_{index}", label_visibility="collapsed")
-        with col4:
-            unit_options = DOSAGE_UNITS + ['Other']
-            unit_selected = st.selectbox("Unit", options=[''] + unit_options, 
-                                        index=0 if pd.isna(st.session_state.df.at[index, 'dosage_unit']) or st.session_state.df.at[index, 'dosage_unit'] == '' 
-                                        or st.session_state.df.at[index, 'dosage_unit'] not in DOSAGE_UNITS 
-                                        else unit_options.index(st.session_state.df.at[index, 'dosage_unit'])+1, 
-                                        key=f"dosage_unit_{index}", label_visibility="collapsed")
-            if unit_selected == 'Other':
-                new_unit = st.text_input("", key="user_input_key", label_visibility="collapsed")
-                if new_unit and st.button(f"Add New Unit", key=f"add_unit_{index}"):
-                    add_constant("dosage_units", new_unit)
-                    DOSAGE_UNITS.append(new_unit)
-                    st.success(f"Added '{new_unit}' to Unit options.")
-            else:
-                st.session_state.df.at[index, 'dosage_unit'] = unit_selected
-        with col5:
-            st.session_state.df.at[index, 'concentration'] = st.text_input("Concentration", value=st.session_state.df.at[index, 'concentration'], key=f"concentration_{index}", label_visibility="collapsed")
-        with col6:
-            frequency_options = FREQUENCY_OPTIONS + ['Other']
-            frequency_selected = st.selectbox("Frequency", options=[''] + frequency_options, 
-                                            index=0 if pd.isna(st.session_state.df.at[index, 'frequency']) or st.session_state.df.at[index, 'frequency'] == '' 
-                                            or st.session_state.df.at[index, 'frequency'] not in FREQUENCY_OPTIONS 
-                                            else frequency_options.index(st.session_state.df.at[index, 'frequency'])+1, 
-                                            key=f"frequency_{index}", label_visibility="collapsed")
-            if frequency_selected == 'Other':
-                new_frequency = st.text_input("", key="user_input_key", label_visibility='collapsed')
-                if new_frequency:
-                    add_constant("frequency_options", new_frequency)
-                    FREQUENCY_OPTIONS.append(new_frequency)
-                    st.success(f"Added '{new_frequency}' to Frequency options.")
-            else:
-                st.session_state.df.at[index, 'frequency'] = frequency_selected
-        with col7:
-            st.session_state.df.at[index, 'duration'] = st.text_input("Duration", value=st.session_state.df.at[index, 'duration'], key=f"duration_{index}", label_visibility="collapsed")
-        with col8:
-            route_options = ROUTE_OPTIONS + ['Other']
-            route_selected = st.selectbox("Route", options=[''] + route_options, 
-                                        index=0 if pd.isna(st.session_state.df.at[index, 'route']) or st.session_state.df.at[index, 'route'] == '' 
-                                        or st.session_state.df.at[index, 'route'] not in ROUTE_OPTIONS 
-                                        else route_options.index(normalize(st.session_state.df.at[index, 'route']))+1, 
-                                        key=f"route_{index}", label_visibility="collapsed")
-            if route_selected == 'Other':
-                new_route = st.text_input("", key="user_input_key", label_visibility='collapsed')
-                if new_route and st.button(f"Add New Route", key=f"add_route_{index}"):
-                    add_constant("route_options", new_route)
-                    ROUTE_OPTIONS.append(new_route)
-                    st.success(f"Added '{new_route}' to Route options.")
-            else:
-                st.session_state.df.at[index, 'route'] = route_selected
-        with col9:
-            if st.button("🗑️", key=f"delete_{index}", help="Delete this row"):
-                st.session_state.df = st.session_state.df.drop(index)
-                st.session_state.df = st.session_state.df.reset_index(drop=True)
-                st.rerun()
+        render_table_row(index)
 
     # Add new row button
     if st.button("Add New Row"):
@@ -166,7 +256,6 @@ def main():
             # Combine dosage_num and dosage_unit back into dosage
             st.session_state.df['dosage'] = st.session_state.df.apply(lambda row: f"{row['dosage_num']} {row['dosage_unit']}" if row['dosage_num'] and row['dosage_unit'] else '', axis=1)
             save_df = st.session_state.df.drop(columns=['dosage_num', 'dosage_unit'])
-            print(f"Username saving - {st.session_state.username}")
             save_annotation(doc_id, st.session_state.username, save_df)
             st.success("Annotation saved successfully!")
             # Clear the session state to fetch a new document
