@@ -223,7 +223,7 @@ def main():
     if 'df' not in st.session_state:
         st.session_state.df = fetch_structured_drugs(doc_id)
         # Split dosage into number and unit
-        st.session_state.df[['dosage_num', 'dosage_unit']] = st.session_state.df['dosage'].apply(split_dosage).tolist()
+        #st.session_state.df[['dosage_num', 'dosage_unit']] = st.session_state.df['dosage'].apply(split_dosage).tolist()
 
     # Create table headers
     col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns([2,1,1,1,1,1,1,1,0.5])
@@ -254,8 +254,7 @@ def main():
     with col1:
         if st.button("Save Annotation"):
             # Combine dosage_num and dosage_unit back into dosage
-            st.session_state.df['dosage'] = st.session_state.df.apply(lambda row: f"{row['dosage_num']} {row['dosage_unit']}" if row['dosage_num'] and row['dosage_unit'] else '', axis=1)
-            save_df = st.session_state.df.drop(columns=['dosage_num', 'dosage_unit'])
+            save_df = st.session_state.df
             save_annotation(doc_id, st.session_state.username, save_df)
             st.success("Annotation saved successfully!")
             # Clear the session state to fetch a new document
