@@ -243,7 +243,7 @@ def main():
 
     # Add new row button
     if st.button("Add New Row"):
-        new_row = pd.DataFrame([[doc_id, '', '', '', '', '', '', '', '', '']], columns=st.session_state.df.columns)
+        new_row = pd.DataFrame([[doc_id, '', '', '', '', '', '', '', '']], columns=st.session_state.df.columns)
         st.session_state.df = pd.concat([st.session_state.df, new_row], ignore_index=True)
         st.rerun()
 
